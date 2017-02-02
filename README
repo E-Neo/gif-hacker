@@ -1,0 +1,64 @@
+gif-hacker
+==========
+
+
+Introduction
+------------
+
+This is a little hobby project intended to manipulate GIF images.
+
+
+Examples
+--------
+
+  > parser = require "gif-parser"
+  > -- https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif
+  > f = assert(io.open("Rotating_earth_(large).gif", "r"))
+  > s = f:read("*a")
+  > f:close()
+  true
+  > g = parser(s)
+  > g.header.version
+  89a
+  > #g.logical_screen.global_color_table
+  256
+  > #g.data_list
+  45
+  > g.data_list[1].label
+  special_purpose_block
+  > g.data_list[1].application_identifier
+  NETSCAPE
+  > g.data_list[2].label
+  graphic_block
+  > g.data_list[2].graphic_control_extension.delay_time
+  9
+
+
+Requirements
+------------
+
+- Lua 5.3
+
+
+GIF Grammar
+-----------
+
+  <gif_data_stream>         ::= header <logical_screen> <data>* trailer
+  <logical_screen>          ::= logical_screen_descriptor [global_color_table]
+  <data>                    ::= <graphic_block> | <special_purpose_block>
+  <graphic_block>           ::= [graphic_control_extension] <graphic_rendering_block>
+  <graphic_rendering_block> ::= <table_based_image> | plain_text_extension
+  <table_based_image>       ::= image_descriptor [local_color_table] image_data
+  <special_purpose_block>   ::= application_extension | comment_extension
+
+
+License
+-------
+
+This project is licensed under the terms of the MIT license.
+
+
+References
+----------
+
+- https://www.w3.org/Graphics/GIF/spec-gif89a.txt
